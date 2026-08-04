@@ -1,0 +1,324 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #faf9f7;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #f2f0ed;
+  /* The sidebar follows the theme; keeping it dark here left dark --text
+     unreadable against it. */
+  --sidebar: #f2efe9;
+  --sidebar-hover: #e9e5de;
+  --sidebar-active: #ddd8ce;
+  --sidebar-border: #e2ded7;
+  --text: #23201d;
+  --text-muted: #6f6a64;
+  --text-faint: #a29c94;
+  --border: #e6e2dc;
+  --accent: #b45309;
+  --accent-soft: #fef3e2;
+  --accent-strong: #92400e;
+  --user-bubble: #23201d;
+  --user-bubble-text: #faf9f7;
+  --danger: #b91c1c;
+}
+
+.dark {
+  --bg: #16140f;
+  --bg-elevated: #1f1c17;
+  --bg-sunken: #12100c;
+  --sidebar: #100e0b;
+  --sidebar-hover: #1d1a15;
+  --sidebar-active: #262119;
+  --sidebar-border: #2a251e;
+  --text: #f1ede6;
+  --text-muted: #a8a096;
+  --text-faint: #726b60;
+  --border: #2c2820;
+  --accent: #e0982f;
+  --accent-soft: #2c2210;
+  --accent-strong: #f4b358;
+  --user-bubble: #e0982f;
+  --user-bubble-text: #1a1408;
+  --danger: #f87171;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--sidebar-border);
+}
+
+@keyframes blink-cursor {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink::after {
+  content: "▍";
+  display: inline-block;
+  margin-left: 1px;
+  color: var(--accent);
+  animation: blink-cursor 1s step-start infinite;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.25s ease-out;
+}
+
+/* Markdown content inside assistant messages */
+.prose-chat {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+/* ── Blocks ── */
+
+.prose-chat > *:first-child {
+  margin-top: 0;
+}
+
+.prose-chat > *:last-child {
+  margin-bottom: 0;
+}
+
+.prose-chat p {
+  margin: 0 0 1em;
+}
+
+/* ── Headings ── */
+
+.prose-chat h1,
+.prose-chat h2,
+.prose-chat h3,
+.prose-chat h4 {
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 1.6em 0 0.6em;
+  color: var(--text);
+}
+
+.prose-chat h1 {
+  font-size: 1.3em;
+}
+.prose-chat h2 {
+  font-size: 1.17em;
+}
+.prose-chat h3 {
+  font-size: 1.05em;
+}
+.prose-chat h4 {
+  font-size: 1em;
+}
+
+.prose-chat h1:first-child,
+.prose-chat h2:first-child,
+.prose-chat h3:first-child,
+.prose-chat h4:first-child {
+  margin-top: 0;
+}
+
+/* Tailwind's preflight sets `list-style: none`, which silently removed every
+   bullet and number from assistant answers. These rules put them back. */
+
+.prose-chat ul,
+.prose-chat ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+}
+
+.prose-chat ul {
+  list-style-type: disc;
+}
+
+.prose-chat ol {
+  list-style-type: decimal;
+}
+
+.prose-chat ul ul {
+  list-style-type: circle;
+}
+
+.prose-chat ul ul ul {
+  list-style-type: square;
+}
+
+.prose-chat ol ol {
+  list-style-type: lower-alpha;
+}
+
+.prose-chat li {
+  margin: 0.35em 0;
+  padding-left: 0.2em;
+}
+
+.prose-chat li::marker {
+  color: var(--text-faint);
+}
+
+/* Nested lists tuck under their parent instead of floating in space. */
+.prose-chat li > ul,
+.prose-chat li > ol {
+  margin: 0.35em 0 0.35em;
+}
+
+.prose-chat li > p {
+  margin: 0 0 0.5em;
+}
+
+.prose-chat li:last-child > p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Inline ── */
+
+.prose-chat strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.prose-chat em {
+  font-style: italic;
+}
+
+.prose-chat a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-chat a:hover {
+  opacity: 0.85;
+}
+
+/* ── Code ── */
+
+.prose-chat code {
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.12em 0.4em;
+  font-size: 0.87em;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  word-break: break-word;
+}
+
+.prose-chat pre {
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9em 1.05em;
+  overflow-x: auto;
+  margin: 0 0 1em;
+  line-height: 1.55;
+}
+
+.prose-chat pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.86em;
+  white-space: pre;
+  word-break: normal;
+}
+
+/* ── Quotes and rules ── */
+
+.prose-chat blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 0 0 1em;
+  padding: 0.15em 0 0.15em 1em;
+  color: var(--text-muted);
+}
+
+.prose-chat blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.prose-chat hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}
+
+/* ── Tables ── */
+
+.prose-chat .table-scroll {
+  overflow-x: auto;
+  margin: 0 0 1em;
+}
+
+.prose-chat table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+.prose-chat th,
+.prose-chat td {
+  border: 1px solid var(--border);
+  padding: 0.5em 0.75em;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose-chat thead th {
+  background: var(--bg-sunken);
+  font-weight: 600;
+}
+
+.prose-chat tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--bg-sunken) 45%, transparent);
+}

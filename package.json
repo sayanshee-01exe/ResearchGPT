@@ -1,0 +1,12 @@
+{
+  "name": "papeer-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Repo-root harness for Playwright end-to-end tests (see tests/e2e).",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}
