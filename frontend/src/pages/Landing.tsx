@@ -320,21 +320,6 @@ export default function Landing() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: FAQ_SCHEMA }} />
       </section>
 
-      {/* ── Closing CTA ── */}
-      <section className="border-t border-[var(--border)] px-5 py-20 text-center sm:px-8">
-        <h2 className="text-2xl font-semibold sm:text-3xl">Start with one paper</h2>
-        <p className="mx-auto mt-3 max-w-md text-[var(--text-muted)]">
-          Create an account and upload something you have been meaning to read.
-        </p>
-        <Link
-          data-testid="cta-signup"
-          to="/signup"
-          className="mt-8 inline-block rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-medium text-[var(--user-bubble-text)] transition hover:bg-[var(--accent-strong)]"
-        >
-          Create your account
-        </Link>
-      </section>
-
       <SiteFooter />
     </div>
   );

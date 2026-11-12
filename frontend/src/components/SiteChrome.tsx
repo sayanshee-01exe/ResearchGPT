@@ -10,8 +10,10 @@ const NAV = [
   { label: "FAQ", to: "/#faq" },
 ];
 
-const linkClass =
-  "text-sm text-[var(--text-muted)] transition hover:text-[var(--text)]";
+const plainLink =
+  "rounded-lg px-3 py-2 text-sm text-[var(--text-muted)] transition hover:text-[var(--text)]";
+const primaryButton =
+  "rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--user-bubble-text)] transition hover:bg-[var(--accent-strong)]";
 
 export function SiteHeader() {
   const { user } = useAuth();
@@ -23,44 +25,19 @@ export function SiteHeader() {
           📚 ResearchGPT
         </Link>
 
-        {/* Full-width second row on phones, inline on larger screens. */}
-        <nav
-          aria-label="Main"
-          className="order-last flex w-full justify-between sm:order-none sm:w-auto sm:gap-6"
-        >
-          {NAV.map((item) => (
-            <Link key={item.label} to={item.to} className={linkClass}>
-              {item.label}
+        <div className="ml-auto flex items-center gap-1 sm:gap-3">
+          <Link data-testid="nav-login" to="/login" className={plainLink}>
+            Log in
+          </Link>
+          {/* Sign up is the main button unless "Open ResearchGPT" takes that spot. */}
+          <Link data-testid="cta-signup" to="/signup" className={user ? plainLink : primaryButton}>
+            Sign up
+          </Link>
+          {user && (
+            <Link data-testid="nav-open-app" to="/app" className={primaryButton}>
+              <span className="sm:hidden">Open app</span>
+              <span className="hidden sm:inline">Open ResearchGPT</span>
             </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2 sm:gap-4">
-          {user ? (
-            <Link
-              data-testid="nav-open-app"
-              to="/app"
-              className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--user-bubble-text)] transition hover:bg-[var(--accent-strong)]"
-            >
-              Open ResearchGPT
-            </Link>
-          ) : (
-            <>
-              <Link
-                data-testid="nav-login"
-                to="/login"
-                className="rounded-lg px-3 py-2 text-sm text-[var(--text-muted)] transition hover:text-[var(--text)]"
-              >
-                Log in
-              </Link>
-              <Link
-                data-testid="cta-signup"
-                to="/signup"
-                className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--user-bubble-text)] transition hover:bg-[var(--accent-strong)]"
-              >
-                Get started
-              </Link>
-            </>
           )}
         </div>
       </div>
@@ -79,12 +56,6 @@ export function SiteFooter() {
               {item.label}
             </Link>
           ))}
-          <Link to="/login" className="hover:text-[var(--text)]">
-            Log in
-          </Link>
-          <Link to="/signup" className="hover:text-[var(--text)]">
-            Sign up
-          </Link>
         </nav>
       </div>
     </footer>
