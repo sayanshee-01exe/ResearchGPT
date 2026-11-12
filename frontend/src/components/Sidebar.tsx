@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import type { Session } from "../types";
 import type { View } from "../views";
@@ -110,9 +110,14 @@ export default function Sidebar({
         }`}
       >
         {!collapsed && (
-          <span className="flex items-center gap-2 px-1 text-[15px] font-semibold tracking-tight text-[var(--text)]">
+          <Link
+            to="/"
+            data-testid="sidebar-brand"
+            title="About ResearchGPT"
+            className="flex items-center gap-2 rounded-lg px-1 text-[15px] font-semibold tracking-tight text-[var(--text)] transition-opacity hover:opacity-80"
+          >
             📚 ResearchGPT
-          </span>
+          </Link>
         )}
         <button
           data-testid="sidebar-toggle"

@@ -4,10 +4,55 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ResearchGPT — Research Paper Assistant</title>
+    <title>ResearchGPT — AI Research Paper Assistant: Chat with PDFs &amp; arXiv Papers</title>
+    <meta
+      name="description"
+      content="Upload research papers (PDF, URL or arXiv ID) and ask questions in plain language. ResearchGPT gives answers grounded in your papers and checks whether their claims still hold against newer research."
+    />
+    <meta name="theme-color" content="#b45309" />
+
+    <!-- Link previews (WhatsApp, LinkedIn, X, Slack, …) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ResearchGPT" />
+    <meta property="og:title" content="ResearchGPT — Chat with your research papers" />
+    <meta
+      property="og:description"
+      content="Ask questions about PDFs and arXiv papers, get grounded answers, and verify claims against the latest research."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ResearchGPT — Chat with your research papers" />
+    <meta
+      name="twitter:description"
+      content="Ask questions about PDFs and arXiv papers, get grounded answers, and verify claims against the latest research."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ResearchGPT",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any (web browser)",
+        "description": "An AI research paper assistant. Upload PDFs, web pages or arXiv papers, ask questions in plain language, and verify whether a paper's claims have been superseded by newer research."
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Shown to crawlers and visitors without JavaScript; React replaces it on load. -->
+    <div id="root">
+      <main style="max-width: 40rem; margin: 4rem auto; padding: 0 1rem; font-family: sans-serif">
+        <h1>ResearchGPT — chat with your research papers</h1>
+        <p>
+          Upload a PDF, paste a web URL, or search arXiv by title or ID. Ask questions in plain
+          language and get answers grounded in your papers. Ask ResearchGPT to verify a claim and
+          it searches the web and arXiv to tell you whether newer work supersedes it.
+        </p>
+        <p>
+          <a href="/signup">Create a free account</a> · <a href="/login">Log in</a> ·
+          <a href="/about">About ResearchGPT</a>
+        </p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

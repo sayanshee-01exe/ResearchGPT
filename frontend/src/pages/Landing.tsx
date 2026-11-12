@@ -1,5 +1,88 @@
-import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { SiteFooter, SiteHeader } from "../components/SiteChrome";
+import { usePageMeta } from "../hooks/usePageMeta";
+
+// Sample exchanges for the "See it in action" demo. Static — no API calls.
+const DEMOS = [
+  {
+    label: "Ask a paper",
+    route: "Answered from your paper",
+    question: "How did the authors evaluate the Transformer?",
+    answer:
+      "They evaluated it on the WMT 2014 English–German and English–French translation benchmarks, scored with BLEU. The big Transformer reached 28.4 BLEU on English–German and 41.8 on English–French, beating earlier models at a fraction of the training cost. (Attention Is All You Need, §6.1)",
+  },
+  {
+    label: "Verify a claim",
+    route: "Checked against web + arXiv",
+    question: "Verify: recurrent encoder–decoder models are the best approach to machine translation.",
+    answer:
+      "Superseded. That was a fair summary around 2016, but the Transformer (Vaswani et al., 2017) outperformed recurrent models on the standard translation benchmarks, and attention-based architectures have dominated since. Newer work to read: arXiv 1706.03762.",
+  },
+  {
+    label: "/btw side question",
+    route: "Not saved to your session",
+    question: "/btw what's the difference between precision and recall?",
+    answer:
+      "Precision is the share of the items you flagged that were actually relevant. Recall is the share of all relevant items you managed to flag. Raising one usually lowers the other, which is why papers often report F1, their harmonic mean.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "What is ResearchGPT?",
+    a: "ResearchGPT is an AI research assistant that lets you chat with research papers. Upload your papers, ask questions in plain language, and get answers grounded in the text, then check whether the papers' claims still hold against newer research.",
+  },
+  {
+    q: "What kinds of papers can I upload?",
+    a: "PDF, TXT and Markdown files, any web page by URL, or an arXiv paper by its title or ID (for example 2303.08774).",
+  },
+  {
+    q: "How is this different from asking a general chatbot?",
+    a: "Answers come from the retrieved passages of your own papers rather than the model's memory, and questions about recent developments use live web search instead of stale training data.",
+  },
+  {
+    q: "How does claim verification work?",
+    a: "Ask ResearchGPT to verify a claim. It searches the web and arXiv, tells you whether the claim still holds or has been superseded, and links the newer papers.",
+  },
+  {
+    q: "Are my papers private?",
+    a: "Your sessions are tied to your account and other users cannot see them. Each session keeps its own separate collection of papers.",
+  },
+  {
+    q: "What is the /btw command?",
+    a: "Start a message with /btw to ask an off-topic question without leaving your session. Those exchanges are never saved to your session history.",
+  },
+];
+
+// Lets Google show the FAQ as rich results. Built from FAQS so the two never drift.
+const FAQ_SCHEMA = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+});
+
+function TypedAnswer({ text }: { text: string }) {
+  const [shown, setShown] = useState(() =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ? text.length : 0
+  );
+
+  useEffect(() => {
+    if (shown >= text.length) return;
+    const id = setTimeout(() => setShown((n) => Math.min(n + 3, text.length)), 16);
+    return () => clearTimeout(id);
+  }, [shown, text]);
+
+  return (
+    <p className={`text-sm leading-relaxed ${shown < text.length ? "cursor-blink" : ""}`}>
+      {text.slice(0, shown)}
+    </p>
+  );
+}
 
 const STEPS = [
   {
@@ -47,45 +130,25 @@ const FEATURES = [
 ];
 
 export default function Landing() {
-  const { user } = useAuth();
+  usePageMeta(
+    "ResearchGPT — AI Research Paper Assistant: Chat with PDFs & arXiv Papers",
+    "Upload research papers (PDF, URL or arXiv ID) and ask questions in plain language. ResearchGPT gives answers grounded in your papers and checks whether their claims still hold against newer research."
+  );
+  // Nav links like /#faq arrive from other pages; scroll to the section once rendered.
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
+  }, [hash]);
+
+  const [demoIndex, setDemoIndex] = useState(0);
+  const demo = DEMOS[demoIndex];
 
   return (
     <div
       data-testid="landing"
-      className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]"
+      className="min-h-screen overflow-x-clip bg-[var(--bg)] text-[var(--text)]"
     >
-      {/* ── Nav ── */}
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
-        <span className="text-lg font-semibold tracking-tight">📚 ResearchGPT</span>
-        <nav className="flex items-center gap-2 sm:gap-4">
-          {user ? (
-            <Link
-              data-testid="nav-open-app"
-              to="/app"
-              className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--user-bubble-text)] transition hover:bg-[var(--accent-strong)]"
-            >
-              Open ResearchGPT
-            </Link>
-          ) : (
-            <>
-              <Link
-                data-testid="nav-login"
-                to="/login"
-                className="rounded-lg px-3 py-2 text-sm text-[var(--text-muted)] transition hover:text-[var(--text)]"
-              >
-                Log in
-              </Link>
-              <Link
-                data-testid="cta-signup"
-                to="/signup"
-                className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--user-bubble-text)] transition hover:bg-[var(--accent-strong)]"
-              >
-                Get started
-              </Link>
-            </>
-          )}
-        </nav>
-      </header>
+      <SiteHeader />
 
       {/* ── Hero ── */}
       <section
@@ -111,19 +174,71 @@ export default function Landing() {
           >
             Start reading free
           </Link>
-          <Link
-            to="/login"
+          <a
+            href="#demo"
             className="w-full rounded-xl border border-[var(--border)] px-6 py-3 text-sm font-medium text-[var(--text)] transition hover:bg-[var(--bg-elevated)] sm:w-auto"
           >
-            I have an account
-          </Link>
+            See it in action ↓
+          </a>
         </div>
+      </section>
+
+      {/* ── Interactive demo ── */}
+      <section
+        id="demo"
+        data-testid="demo"
+        className="mx-auto max-w-3xl scroll-mt-28 px-5 pb-20 sm:px-8"
+      >
+        <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="Example questions">
+          {DEMOS.map((d, i) => (
+            <button
+              key={d.label}
+              type="button"
+              data-testid="demo-tab"
+              aria-pressed={i === demoIndex}
+              onClick={() => setDemoIndex(i)}
+              className={`rounded-full border px-4 py-1.5 text-sm transition ${
+                i === demoIndex
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                  : "border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)]"
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 text-left shadow-sm sm:p-6">
+          <div className="flex justify-end">
+            <p
+              data-testid="demo-question"
+              className="max-w-[85%] rounded-2xl rounded-br-sm bg-[var(--user-bubble)] px-4 py-2.5 text-sm text-[var(--user-bubble-text)]"
+            >
+              {demo.question}
+            </p>
+          </div>
+          <div className="mt-4 min-h-32" aria-live="polite">
+            <span className="mb-2 inline-block rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-medium text-[var(--accent-strong)]">
+              {demo.route}
+            </span>
+            {/* key restarts the typing animation when the question changes */}
+            <TypedAnswer key={demoIndex} text={demo.answer} />
+          </div>
+        </div>
+        <p className="mt-4 text-center text-xs text-[var(--text-faint)]">
+          Example answers.{" "}
+          <Link to="/signup" className="underline underline-offset-2 hover:text-[var(--text)]">
+            Sign up
+          </Link>{" "}
+          to ask about your own papers.
+        </p>
       </section>
 
       {/* ── How it works ── */}
       <section
+        id="how-it-works"
         data-testid="how-it-works"
-        className="border-t border-[var(--border)] bg-[var(--bg-sunken)] px-5 py-20 sm:px-8"
+        className="scroll-mt-28 border-t border-[var(--border)] bg-[var(--bg-sunken)] px-5 py-20 sm:px-8"
       >
         <div className="mx-auto max-w-6xl">
           <h2 className="text-center text-2xl font-semibold sm:text-3xl">How it works</h2>
@@ -149,7 +264,7 @@ export default function Landing() {
       </section>
 
       {/* ── Features ── */}
-      <section data-testid="features" className="px-5 py-20 sm:px-8">
+      <section id="features" data-testid="features" className="scroll-mt-28 px-5 py-20 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-center text-2xl font-semibold sm:text-3xl">
             What you can do with it
@@ -171,6 +286,40 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── FAQ ── */}
+      <section
+        id="faq"
+        data-testid="faq"
+        className="scroll-mt-28 border-t border-[var(--border)] bg-[var(--bg-sunken)] px-5 py-20 sm:px-8"
+      >
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-center text-2xl font-semibold sm:text-3xl">
+            Frequently asked questions
+          </h2>
+          <div className="mt-10 space-y-3">
+            {FAQS.map((f) => (
+              <details
+                key={f.q}
+                data-testid="faq-item"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-4"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium [&::-webkit-details-marker]:hidden">
+                  {f.q}
+                  <span
+                    aria-hidden
+                    className="text-xl text-[var(--accent)] transition group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: FAQ_SCHEMA }} />
+      </section>
+
       {/* ── Closing CTA ── */}
       <section className="border-t border-[var(--border)] px-5 py-20 text-center sm:px-8">
         <h2 className="text-2xl font-semibold sm:text-3xl">Start with one paper</h2>
@@ -186,9 +335,7 @@ export default function Landing() {
         </Link>
       </section>
 
-      <footer className="border-t border-[var(--border)] px-5 py-8 text-center text-sm text-[var(--text-faint)] sm:px-8">
-        ResearchGPT — built with LangGraph, FastAPI and React.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
