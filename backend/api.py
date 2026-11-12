@@ -34,7 +34,7 @@ app.add_middleware(
 SESSIONS_FILE = Path(os.environ.get("PAPEER_SESSIONS_FILE", "sessions.json"))
 _sessions_lock = threading.Lock()
 _rename_llm = ChatOpenAI(model="gpt-5-mini")
-graph = build_graph()
+graph = build_graph(os.environ.get("PAPEER_CHECKPOINTS_FILE", "checkpoints.db"))
 
 
 # ── Session metadata persistence ────────────────────────────────────────────

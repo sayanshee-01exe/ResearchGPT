@@ -28,11 +28,11 @@ COPY documents/ documents/
 COPY evaluate.py .
 COPY main.py .
 COPY goldens.json .
-COPY sessions.json .
 
 # ── Layer 5: built frontend static assets ──────────────────────────────────────
 COPY --from=frontend-build /app/frontend/dist frontend/dist
 
 EXPOSE 8000
 
-CMD ["uvicorn", "backend.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Hosts like Railway pass the port in $PORT; default to 8000 locally.
+CMD ["sh", "-c", "uvicorn backend.api:app --host 0.0.0.0 --port ${PORT:-8000}"]
